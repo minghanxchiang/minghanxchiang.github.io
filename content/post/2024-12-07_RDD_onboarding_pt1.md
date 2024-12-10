@@ -1,6 +1,6 @@
 +++
 date = '2024-12-07T15:42:54+08:00'
-draft = true
+draft = false
 tags = ['Causal Inference', 'Natural Experiment', 'Econometrics']
 title = 'Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2)'
 description = "This article lays the groundwork for understanding Regression Discontinuity Design (RDD), a robust causal inference method, by examining its core assumptions and setting the stage for a follow-up on conducting the analysis and interpreting the results."
