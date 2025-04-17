@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Data Travelogue by Daniel Chiang">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://minghanxchiang.github.io//img/Rochester Chicago 2022.jpg">
+    <meta property="twitter:image" content="https://minghanxchiang.github.io//img/Rochester Chicago 2022.jpg" />
+    
+
+    
+    <meta name="title" content="Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2)" />
+    <meta property="og:title" content="Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2)" />
+    <meta property="twitter:title" content="Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2)" />
+    
+
+    
+    <meta name="description" content="This article lays the groundwork for understanding Regression Discontinuity Design (RDD), a robust causal inference method, by examining its core assumptions and setting the stage for a follow-up on conducting the analysis and interpreting the results.">
+    <meta property="og:description" content="This article lays the groundwork for understanding Regression Discontinuity Design (RDD), a robust causal inference method, by examining its core assumptions and setting the stage for a follow-up on conducting the analysis and interpreting the results." />
+    <meta property="twitter:description" content="This article lays the groundwork for understanding Regression Discontinuity Design (RDD), a robust causal inference method, by examining its core assumptions and setting the stage for a follow-up on conducting the analysis and interpreting the results." />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2) | 蔣明翰的部落格 | Daniel Chiang&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/2024-12-07_rdd_onboarding_pt1/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    <link rel="stylesheet" href="https://minghanxchiang.github.io/css/custom.css">
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+    
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],  
+      inlineMath: [['\\(', '\\)']]                  
+    }
+  };
+</script>
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Data Travelogue by Daniel Chiang</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                    
+                    
+		    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/Rochester%20Chicago%202022.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/causal-inference" title="Causal Inference">
+                            Causal Inference
+                        </a>
+                        
+                        <a class="tag" href="/tags/natural-experiment" title="Natural Experiment">
+                            Natural Experiment
+                        </a>
+                        
+                        <a class="tag" href="/tags/econometrics" title="Econometrics">
+                            Econometrics
+                        </a>
+                        
+                    </div>
+                    <h1>Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2)</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    Data Travelogue by Daniel Chiang
+                             
+                            on 
+                            Saturday, December 7, 2024
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p><em>This article lays the groundwork for understanding Regression Discontinuity Design (RDD), a robust causal inference method, by examining its core assumptions and setting the stage for a follow-up on conducting the analysis and interpreting the results.</em></p>
+<p>Regression Discontinuity Design (RDD) has long been recognized as <em>the identification strategy</em> for precisely estimating treatment effects in non-experimental setups. When a project satisfies all the assumptions and requirements, RDD performs almost as well as a randomized control trial (RCT). However, unlike online RCTs, RDD often receives limited attention in the IT industry. For major social platforms and app-based products, running standardized, fast-paced, and stratified experiments on a subsample of users is relatively cheap<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. It’s understandable that they often overlook RDD for impact evaluation.</p>
+<p>For small-to-medium-sized startups, though, RDD offers a valuable lens for analyzing historical data. These organizations often roll out changes or release new builds in ways that unintentionally satisfy the requirements for a robust RDD study.</p>
+<p>RDD is termed a &ldquo;design&rdquo; for a reason. It requires a specific <em>you-either-have-it-or-you-don’t</em> quality inherent in a policy or program, rather than being a strategy one can apply universally. The essence of this method lies in identifying a strict, exogenous <em>rule-defining cutoff</em>—be it age, time, income, or another continuous variable—that determines treatment assignment. Analyzing data points around this cutoff mimics a tiny RCT because the cutoff introduces a degree of randomness for participants near it.</p>
+<hr>
+<h2 id="a-running-example">A Running Example</h2>
+<p>Let’s explore a typical scenario in a growing startup. People are often curious about the net impact of a design change or want to understand whether past decisions were effective. Unfortunately, proper experimental designs may be absent or incorrectly implemented.</p>
+<p>In my case, a teammate approached me to investigate a decline in the user onboarding conversion rate. By tracking the conversion rate over time and reviewing recent onboarding process changes, I identified a key alteration: the addition of a button to pair our hardware product with users&rsquo; mobile devices.</p>
+<p>At the time this button was introduced, our hardware product had not been officially released. This button effectively directed new users to a dead end. Promoting hardware products was not a focus of our acquisition strategy, and most new users were unaware of the hardware ecosystem when first using our app. If I had been a new user, I would likely have been confused as well.</p>
+<p>
+  <figure>
+    <img src="/img/post_img/2024-12-07_RDD_onboarding_pt1/new_lay_out.png" alt="targets">
+    <center><figcaption>This is an AI generated illustrative layout, we changed from something like the right one to something like the left one</figcaption></center>
+  </figure>
+
+</p>
+<p>This led to my hypothesis: the button impaired the onboarding process, discouraging users from completing it and becoming valid users.</p>
+<p>“Why RDD?” you might ask. This design change was launched without any randomization, ruling out the possibility of using ordinary least squares (OLS) regression or confounder-free instrumental variables (IV). It also lacked control units, eliminating the difference-in-difference (DiD) approach. However, the build with this change was released—like many app updates—without prior notice. This gave us an exogenous cutoff to explore further.</p>
+<hr>
+<h2 id="method-overview-whats-rdd-and-why-fuzzy-rdd">Method Overview: What&rsquo;s RDD and Why Fuzzy RDD?</h2>
+<p>RDD includes two specifications: <em>Sharp RDD</em> and <em>Fuzzy RDD</em>. For this analysis, I used the latter. If you&rsquo;re unfamiliar with these methods, I recommend reading [<a href="https://www.princeton.edu/~davidlee/wp/RDDEconomics.pdf">Lee and Lemieux (2010)</a>]. In brief, sharp RDD applies when the running variable’s discontinuity solely determines treatment assignment<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>, while fuzzy RDD is used when the discontinuity only affects the probability of treatment assignment. Despite these differences, <em>both sharp and fuzzy RDD share the same set of assumptions</em>, making their implementation dependent on meeting these foundational requirements.</p>
+<p>In this example, the running variable is the time when a user first signed up, with the build’s release time serving as the cutoff. Since the global staged rollout of the update increased users’ probability of exposure to the treatment from 0% to a value between 0% and 100%, fuzzy RDD was the appropriate framework.</p>
+<p>The essence of fuzzy RDD is to <em>partial out potential confounders using an exogenously established cutoff</em> as an instrumental variable (IV). Ideally, the cutoff possesses the key characteristics of a valid IV: <em>relevance</em> and <em>exclusion restriction</em>.</p>
+<ul>
+<li><strong>Relevance:</strong> This is inherent because the discontinuity directly affects treatment assignment.</li>
+<li><strong>Exclusion Restriction:</strong> This is validated by examining coinciding treatments, density, and smoothness.</li>
+</ul>
+<hr>
+<h2 id="assumptions-for-rdd">Assumptions for RDD</h2>
+<h3 id="coinciding-treatments">Coinciding Treatments</h3>
+<p>This assumption addresses whether other factors simultaneously affect the outcome of interest. Overlooking this is a common mistake. Analysts should verify the specifics of the build in team communication channels or documentation.</p>
+<p>In my example, the only change to the onboarding process was the new layout. Since the build passed quality assurance, I could safely assume no other coinciding treatments occurred during this update.</p>
+<h3 id="density">Density</h3>
+<p>For RDD to be valid, participants must not be able to manipulate their position relative to the cutoff. If individuals can strategically place themselves on one side of the cutoff, the exogeneity assumption breaks down, and causal inference is compromised. For example, an airline loyalty program offering lounge access after 50,000 miles might encourage someone with 49,800 miles to take an extra trip, making the cutoff endogenous.</p>
+<p>While statistical tests are valuable, <em>having a strong argument for why manipulation is unlikely is equally, if not more, critical.</em> Before diving into tests, analysts should carefully consider the context of their data and the specific policy or change being evaluated. In my case, the cutoff was determined by the timing of a build release—something users couldn’t influence or anticipate. This contextual understanding strengthens confidence in the assumption that no manipulation occurred.</p>
+<p>To supplement this reasoning, statistical methods can be employed to detect potential manipulation. One common approach is to examine the density of the running variable around the cutoff. If individuals cannot anticipate or influence the cutoff, the distribution of data points near the threshold should be smooth. Plotting this distribution allows analysts to visually inspect for any irregularities, such as sparse or dense regions that could indicate manipulation.</p>
+<p>The <strong>local polynomial density test</strong>, developed by a team of cross-institutional researchers, is a more rigorous method for evaluating density smoothness. This non-parametric test estimates the &ldquo;jump&rdquo; in the density at the cutoff and comes with tools for bandwidth selection and hypothesis testing. The approach involves using kernel structures and bandwidth optimizations to assess the entire support of the running variable<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>. For my project, I tested the density of sample points within a two-day interval around the cutoff. The test failed to reject the null hypothesis of no manipulation, further supporting the validity of the RDD design.</p>
+<p>While tests are useful, they are not a substitute for context-specific reasoning. A combination of thoughtful arguments and robust testing ensures the reliability of an RDD analysis.</p>
+<h3 id="smoothness">Smoothness</h3>
+<p>Another critical assumption for a valid RDD is that no factors other than the running variable exhibit discontinuity at the cutoff. If covariates—observable characteristics that might influence the outcome—are not smooth across the cutoff, it becomes impossible to attribute any observed treatment effect solely to the policy or intervention under study.</p>
+<p>The conventional approach to addressing this assumption is to test for discontinuities <em>exhaustively</em> across all observable covariates. While it’s impractical to test for every conceivable confounder, examining all collected or collectable variables provides a solid foundation for validating the smoothness assumption. This step ensures that the cutoff doesn’t inadvertently align with changes in other factors that could influence the outcome.</p>
+<p>When performing these tests, it is crucial to explore various functional forms for the relationship between covariates and the running variable. Analysts should test parametric forms, such as linear or polynomial models, as well as non-parametric approaches like local polynomials. Using diverse specifications helps ensure robustness and guards against misleading results caused by choosing an inappropriate functional form.</p>
+<p>For instance, in my project, I tested for discontinuities in all key observables using both linear and polynomial models, as well as non-parametric methods. A typical specification for a linear spline model is:</p>
+$$
+X_{i} = \alpha + \beta (rv_{i} - c) + \gamma \ \textbf{I}(rv_{i} \geq c) + \delta (rv_{i} - c)*\textbf{I}(rv_{i} \geq c) + \epsilon_{i}
+$$<p>Here \(rv_{i}\) is the value of the running variable, \(c\) is the cutoff, and \(\textbf{I}(\cdot)\) is an indicator function for whether the running variable exceeds the cutoff. Non-parametric methods, such as local polynomial estimation, allow for greater flexibility and often include automatic bandwidth selection to capture nuances in the data.</p>
+<p>In my tests, none of the observable covariates showed significant discontinuities across the cutoff, regardless of the method used. This consistency across parametric and non-parametric forms provided strong evidence that the smoothness assumption held, granting further credibility to the RDD results.</p>
+<hr>
+<p>In conclusion, RDD, particularly fuzzy RDD, can be a powerful tool for startups to draw causal insights from historical data. This project highlights how the method’s assumptions and requirements, when met, allow analysts to explore causal relationships even in non-experimental settings.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>As experiments become more frequent in an organization, it’s crucial to consider not only estimating the Average Treatment Effect (ATE) but also the implications for false positive rates and statistical power. For further insights, see Kohavi, Deng, and Vermeer (2022): <a href="https://bit.ly/ABTestingIntuitionBusters">A/B Testing Intuition Busters</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>Medicare enrollment or Taiwan&rsquo;s National Pension enrollment are excellent examples. In Taiwan, citizens aged 25 and above are mandatorily and automatically enrolled in the national pension system, with no exceptions. This can be expressed mathematically as \(\textbf{P}(T_{i} = 1 | age_{i} \geq 25 ) = 1\).&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>The manipulative test framework in the referenced paper primarily addresses cases where the running variable has finite support (e.g., the margins of a senate election with support \([-100, 100]\)). For scenarios with indefinite support, such as the example in this series, I focused on a relevant subset — specifically, the interval of one day before and after the update launch—to ensure practical and meaningful analysis.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/post/2024-12-27_rdd_onboarding_pt2/" data-toggle="tooltip" data-placement="top" title="Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (2/2)">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/causal-inference" title="causal inference">
+                            causal inference
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/econometrics" title="econometrics">
+                            econometrics
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/natural-experiment" title="natural experiment">
+                            natural experiment
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    <li>
+                        <a href="mailto:minghanxchiang@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/daniel-minghan-chiang-b27637117">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    <li>
+                        <a target="_blank" href="https://medium.com/@daniel84101">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Data Travelogue by Daniel Chiang 2025
+                    
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>
