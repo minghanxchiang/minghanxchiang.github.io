@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Data Travelogue by Daniel Chiang</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 07 Dec 2024 15:42:54 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 21 Dec 2024 15:42:54 +0800</lastBuildDate>
     <atom:link href="https://minghanxchiang.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (2/2)</title>
+      <link>https://minghanxchiang.github.io/post/2024-12-27_rdd_onboarding_pt2/</link>
+      <pubDate>Sat, 21 Dec 2024 15:42:54 +0800</pubDate>
+      <guid>https://minghanxchiang.github.io/post/2024-12-27_rdd_onboarding_pt2/</guid>
+      <description>&lt;p&gt;In my previous post, I introduced the overview of RDD method, its assumptions, and the illustrative example. Now, Let&amp;rsquo;s see how can we actually run the analysis, and make inferences out of the results.&lt;/p&gt;&#xA;&lt;h2 id=&#34;how-to-conduct-and-interpret-the-main-analysis&#34;&gt;How to Conduct and Interpret the Main Analysis&lt;/h2&gt;&#xA;&lt;p&gt;For Sharp RDD, we&amp;rsquo;re only one step away from the main result. What&amp;rsquo;s left is to check whether there is a significant jump right at the cutoff. The form of the test is just as what we&amp;rsquo;ve seen in the previous section. Or, a more generalized version:&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Introduction to Regression Discontinuity Design - Lessons from an Onboarding Project (1/2)</title>
       <link>https://minghanxchiang.github.io/post/2024-12-07_rdd_onboarding_pt1/</link>
